@@ -1,4 +1,8 @@
 
+const { Given, When, Then } = require('@wdio/cucumber-framework');
+const LoginPage = require('../pageobjects/login.page');
+const userData = require('../step-definitions/testdata/test-data');
+
 
 Given(/^user is on home page$/, function () {
     browser.url('https://automationteststore.com/');
@@ -16,127 +20,151 @@ Given(/^user is on home page$/, function () {
 
   And(/^user enter personal details$/, function () {
     const firstName = $('#AccountFrm_firstname');
-    firstName.setValue('John Doe');
+   // firstName.setValue('John Doe');
+   firstName.setValue(userData.firstName);
 
     const lastName = $('#AccountFrm_lastname');
-    lastName.setValue('John Doe Last');
+    lastName.setValue(userData.lastName);
     
     const email = $('#AccountFrm_email');
-    email.setValue('test@example.com');
+    email.setValue(userData.email);
 
     const address1 = $('#AccountFrm_address_1');
-    address1.setValue('address1');
+    address1.setValue(userData.address);
 
     const citi = $('#AccountFrm_city');
-    citi.setValue('cititest');
+    citi.setValue(userData.city);
 
     const regionandStatedropdown = $('#AccountFrm_zone_id');
+    const selectregionandStatedropdown = regionandStatedropdown.selectByVisibleText(userData.regionandStated);
 
-// Create a Select object from the dropdown element
-const selectregionandStatedropdown = regionandStatedropdown.selectByVisibleText('Vale of Glamorgan');
+    const zipCode = $('#AccountFrm_postcode');
+    zipCode.setValue(userData.zipCode);
 
-const zipCode = $('#AccountFrm_postcode');
-zipCode.setValue('500038');
+    const countryDropdown = $('#AccountFrm_postcode');
+    const selectcountryDropdown= countryDropdown.selectByVisibleText(userData.country);
 
-
-
-
-
+    const loginName = $('#AccountFrm_loginname');
+    loginName.setValue(userData.loginName);
 
     
-    const passwordInput = $('input[name="password"]');
-    passwordInput.setValue('p@ssw0rd');
-    
-    const confirmPasswordInput = $('input[name="confirm-password"]');
-    confirmPasswordInput.setValue('p@ssw0rd');
+    const password = $('#AccountFrm_confirm');
+    password.setValue(userData.password);
+
+    const confirmPasswordInput = $('#AccountFrm_confirm');
+    confirmPasswordInput.setValue(userData.confirmPassword);
+
+    const subscribeRadioButton = $('#AccountFrm_newsletter1');
+
+     // Click on the radio button
+     subscribeRadioButton.click();
+
+    // Verify that the radio button is selected
+    const isSelected = subscribeRadioButton.isSelected();
+    expect(isSelected).toBe(true);
+
+    const privacyPolicy = $('#AccountFrm_agree');
+
+    // Click on the radio button
+    privacyPolicy.click();
+
+    const continueBtn = $('button[title="Continue"]');
+
+    // Click on the radio button
+    continueBtn.click();
+
+
+
+  
   });
 
   Then(/^user account is created$/, function () {
-    const createAccountButton = $('button[data-testid="create-account-button"]');
-    createAccountButton.click();
-    
-    // Verify that the account is created
-    expect(browser).toHaveUrlContaining('https://www.example.com/dashboard');
+   // Locate the user name element
+const userName = $('div[class="menu_text"]');
+// Get the text of the user name
+const userNameText = userName.getText();
+// Verify that the user name contains the expected text
+expect(userNameText).toEqual('Welcome back test');
   });
 
   
 
   Given(/^user is on login page$/, function () {
-    browser.url('https://www.example.com/login');
+    browser.url('https://automationteststore.com/');
   });
 
 
   When(/^user enters username and password$/, function () {
-    const usernameInput = $('input[name="username"]');
-    usernameInput.setValue('johndoe@example.com');
+    const loginName = $('#loginFrm_loginname');
+    usernameInput.setValue(userData.loginName);
     
-    const passwordInput = $('input[name="password"]');
-    passwordInput.setValue('p@ssw0rd');
+    const passwordInput = $('#loginFrm_password');
+    passwordInput.setValue(userData.password);
   });
 
   And(/^user clicks on login button$/, function () {
-    const loginButton = $('button[data-testid="login-button"]');
+    const loginButton = $('button[title="Login"]');
     loginButton.click();
   });
 
   Then(/^user is navigated to the home page$/, function () {
     // Verify that the user is on the home page
-    expect(browser).toHaveUrlContaining('https://www.example.com/');
+    const userName = $('div[class="menu_text"]');
+    // Get the text of the user name
+    const userNameText = userName.getText();
+    // Verify that the user name contains the expected text
+    expect(userNameText).toEqual(userData.homePageHeader);
   });
 
   When(/^user adds a product to the cart$/, function () {
-    // Navigate to the product page
-    browser.url('https://www.example.com/products/1234');
     
-    // Add the product to the cart
-    const addToCartButton = $('button[data-testid="add-to-cart-button"]');
+    const searchKewords = $('#filter_keyword');
+    searchKewords.setValue(userData.product);
+    const searchButton =$(".fa.fa-search");
+    searchButton.click();
+    const addToCartButton = $('.cart');
     addToCartButton.click();
     
-    // Verify that the product is added to the cart
-    expect(browser).toHaveText('span[data-testid="cart-count"]', '1');
   });
 
 
-  And(/^user proceeds to the checkout page and continues till payments$/, function () {
-    // Navigate to the checkout page
-    const checkoutButton = $('button[data-testid="checkout-button"]');
-    checkoutButton.click();
-    
-    // Fill in the shipping details
-    const firstNameInput = $('input[name="first-name"]');
-    firstNameInput.setValue('John');
-    
-    const lastNameInput = $('input[name="last-name"]');
-    lastNameInput.setValue('Doe');
-    
-    const addressInput = $('input[name="address"]');
-    addressInput.setValue('123 Main St');
-    
-    const cityInput = $('input[name="city"]');
-    cityInput.setValue('Anytown');
-    
-    const stateInput = $('input[name="state"]');
-    stateInput.setValue('CA');
-    
-    const zipCodeInput = $('input[name="zip-code"]');
-    zipCodeInput.setValue('12345');
-    
-    // Continue to the payments page
-    const continueToPaymentsButton = $('button[data-testid="continue-to-payments-button"]');
-    continueToPaymentsButton.click();
-    
-    // Verify that the user is on the payments page
-    expect(browser).toHaveUrlContaining('https://www.example.com/checkout/payments');
-  });
 
   Then(/^validate on the payments page if the product details are correct$/, function () {
-    // Verify that the product details are correct
-    const productTitle = $('h2[data-testid="product-title"]').getText();
-    expect(productTitle).toEqual('Product A');
-    
-    const productPrice = $('span[data-testid="product-price"]').getText();
-    expect(productPrice).toEqual('$9.99');
-    
-    const productQuantity = $('input[name="quantity"]').getValue();
-    expect(productQuantity).toEqual('1');
+    const productName = $('td[class="align_left"] a');
+    // Get the text of the user name
+    const productNameText =productName.getText();
+    const productColor = $('div[id="maincontainer"] div[class="container-fluid"]');
+    // Get the text of the user name
+    const productColorText =productColor.getText();
+
+    const productTotlaPrice = $('span[class="bold totalamout"]');
+    // Get the text of the user name
+    const productTotlaPriceText =productTotlaPrice .getText();
+
+    const checkout=$("#cart_checkout2");
+    checkout.click();
+
+
+    const productNameOnPaymentpage = $('a[class="checkout_heading"]');
+    // Get the text of the user name
+    const productNameOnPaymentpageText =productNameOnPaymentpage.getText();
+    expect(productNameText).toEqual( productNameOnPaymentpageText);
+
+
+    const productColorPaymentPage = $('//small[normalize-space()="- Colour black"]');
+    // Get the text of the user name
+    const productColorPaymentPagerText =productColorPaymentPage.getText();
+    expect(productColorText).toEqual(productColorPaymentPagerText);
+
+
+    const productTotlaPricePlaymentPage = $('span[class="bold totalamout"]');
+    // Get the text of the user name
+    const productTotlaPricePlaymentPageText =productTotlaPricePlaymentPage .getText();
+
+    expect(productTotlaPriceText).toEqual(productTotlaPricePlaymentPageText);
+
+   const confirmButton=$('#checkout_btn');
+   confirmButton.click();
+
+
   });

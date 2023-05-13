@@ -9,5 +9,8 @@ module.exports = {
     country:'India',
     loginName:'rajkumar',
     password:'raj123',
+    confirmPassword:'raj123',
+    homePageHeader:'Welcome back test',
+    product:'shoes',
   };
   
